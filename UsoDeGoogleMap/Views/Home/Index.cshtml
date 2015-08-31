@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Tu ubicación actual";
+}
+<div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+<div class="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
+    <div class="demo-crumbs mdl-color-text--grey-500">
+        Google &gt; Maps &gt; Ubicación actual
+    </div>
+    <div class="row">
+        <div id="content-map" class="col s12 m12 l12">               
+            <div id="map-canvas"></div>
+            <input type="hidden" id="latitud" name="lat">
+            <input type="hidden" id="longitud" name="lng">
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing,places"></script>
+    <script src="~/Scripts/map.js"></script>
+    <script>
+        var map;
+        var name_canvas;
+        var map_canvas;
+        $(function () {
+            name_canvas = "#map-canvas";
+            map_canvas = $(name_canvas);
+            setIdDivMap('map-canvas');
+            setIdInputSearch('pac-input');
+            setIdsLatlng('latitud', 'longitud');
+            getGeoLocation();
+            GmapsInit();
+            $(window).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+            $(window).resize(resizeBootstrapMap);
+            $(window).trigger('resize');
+            google.maps.event.addDomListener(window, 'load', GmapsInit);
+
+            function resizeBootstrapMap() {
+                var mapParentWidth = $('#content-map').width();
+                map_canvas.width(mapParentWidth);
+                map_canvas.height(3 * mapParentWidth / 4);
+                google.maps.event.trigger(map_canvas, 'resize');
+            }
+        });
+    </script>
+}
