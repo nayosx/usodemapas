@@ -147,12 +147,7 @@ var initGMap = function () {
         //alert('clicked @' + e.latLng.toString())
         console.log(e.latLng);
         //newLatLng(e);
-        //var marker = new google.maps.Marker({
-        //    position: e.latLng,
-        //    map: map,
-        //    draggable: true,
-        //});
-
+        marker.setMap(null);
         var start = LatLng;
         var end = e.latLng;
 
