@@ -7,14 +7,8 @@ var LatLng = {
     lat: 13.794185,
     lng: -88.89652999999998
 };
-
 var canvas_map;
 var name_canvas;
-var inputSearch;
-var name_input_search;
-
-var directionsDisplay;
-var directionsService = new google.maps.DirectionsService();
 
 var setCanvasMap = function (id_canvas) {
     name_canvas = id_canvas;
@@ -29,18 +23,13 @@ var setLatLng = function (id_lat, id_lng) {
     this.longitud = document.getElementById(id_lng);
 };
 
-var setInputSearch = function (id_input_search) {
-    this.name_input_search = id_input_search;
-    this.inputsearch = document.getElementById(id_input_search);
-}
-
 var showPosition = function (position) {
     latitud.value = position.coords.latitude;
     longitud.value = position.coords.longitude;
 
     LatLng.lat = position.coords.latitude;
     LatLng.lng = position.coords.longitude;
-
+    console.log(LatLng);
     //var latlon = position.coords.latitude + "," + position.coords.longitude;
     //var img_url = "http://maps.googleapis.com/maps/api/staticmap?center="
     //+latlon+"&zoom=14&size=400x300&sensor=false";
@@ -72,28 +61,6 @@ var getGeoLocation = function () {
     }
 };
 
-//marker on map
-var placeMarker = function (location, map, marker) {
-    if (marker) {
-        marker.setPosition(location);
-    } else {
-        marker = new google.maps.Marker({
-            position: location,
-            map: map,
-            draggable: true,
-        });
-        marker.addListener('click', toggleBounce);
-    }
-    function toggleBounce() {
-        if (marker.getAnimation() !== null) {
-            marker.setAnimation(null);
-        } else {
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-        }
-    }
-    return marker;
-}
-
 var initGMap = function () {
     var marker;
     var mapOptions = {
@@ -102,7 +69,19 @@ var initGMap = function () {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
     };
     map = new google.maps.Map(canvas_map, mapOptions);
-    marker = placeMarker(LatLng, map, null);
+    marker = new google.maps.Marker({
+        position: LatLng,
+        map: map,
+        draggable: true,
+    });
+    marker.addListener('click', function () {
+        if (marker.getAnimation() !== null) {
+            marker.setAnimation(null);
+        } else {
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+    });
+
     map.addListener('center_changed', function () {
         console.log("centrando mapa");
         console.log(LatLng);
@@ -111,69 +90,21 @@ var initGMap = function () {
         // do something only the first time the map is loaded
         console.log("termino de cargar");
         map.panTo(LatLng);
-        placeMarker(LatLng, map, marker);
+        marker = new google.maps.Marker({
+            position: LatLng,
+            map: map,
+            draggable: true,
+        });
     });
     google.maps.event.addListener(marker, 'drag', function (event) {
         newLatLng(event.latLng);
+        console.log(event.latLng);
     });
     google.maps.event.addListener(marker, 'dragend', function (event) {
         newLatLng(event.latLng);
         map.panTo(LatLng);
     });
-
-
-    var fx = google.maps.InfoWindow.prototype.setPosition;
-
-    //override the built-in setPosition-method
-    google.maps.InfoWindow.prototype.setPosition = function () {
-
-        //this property isn't documented, but as it seems
-        //it's only defined for InfoWindows opened on POI's
-        if (this.logAsInternal) {
-            google.maps.event.addListenerOnce(map, 'map_changed', function () {
-                var map = this.getMap();
-                //the infoWindow will be opened, usually after a click on a POI
-                if (map) {
-                    //trigger the click
-                    google.maps.event.trigger(map, 'click', { latLng: this.getPosition() });
-                }
-            });
-        }
-        //call the original setPosition-method
-        fx.apply(this, arguments);
-    };
-
-    google.maps.event.addListener(map, 'click', function (e) {
-        //alert('clicked @' + e.latLng.toString())
-        console.log(e.latLng);
-        //newLatLng(e);
-        //var marker = new google.maps.Marker({
-        //    position: e.latLng,
-        //    map: map,
-        //    draggable: true,
-        //});
-
-        var start = LatLng;
-        var end = e.latLng;
-
-        var directionsDisplay = new google.maps.DirectionsRenderer();// also, constructor can get "DirectionsRendererOptions" object
-        directionsDisplay.setMap(map); // map should be already initialized.
-
-        var request = {
-            origin: start,
-            destination: end,
-            travelMode: google.maps.TravelMode.DRIVING
-        };
-        var directionsService = new google.maps.DirectionsService();
-        directionsService.route(request, function (response, status) {
-            if (status == google.maps.DirectionsStatus.OK) {
-                directionsDisplay.setDirections(response);
-            }
-        });
-    })
-
 }
-
 var newLatLng = function (location) {
     LatLng.lat = location.lat();
     LatLng.lng = location.lng();
@@ -191,7 +122,7 @@ var getGoogleMap = function () {
 var resizeBootstrapMap = function (content_map) {
     var content = document.getElementById(content_map);
     var w = content.offsetWidth;
-    canvas_map.style.width = w+"px";
-    canvas_map.style.height = (3 * w / 4)+"px";
+    canvas_map.style.width = w + "px";
+    canvas_map.style.height = (3 * w / 4) + "px";
     google.maps.event.trigger(canvas_map, 'resize');
 };

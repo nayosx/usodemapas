@@ -182,6 +182,7 @@
     <Content Include="Scripts\main.js" />
     <Content Include="Scripts\map.js" />
     <Content Include="Scripts\maplib.js" />
+    <Content Include="Scripts\mappoint.js" />
     <Content Include="Scripts\material.js" />
     <Content Include="Scripts\material.min.js" />
     <Content Include="Scripts\materialize.js" />
@@ -207,6 +208,7 @@
     <Content Include="Scripts\material.min.js.map" />
     <Content Include="Views\Home\SearchMap.cshtml" />
     <Content Include="Views\Home\MarkerMap.cshtml" />
+    <Content Include="Views\Home\MarkerMap - Copia.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
